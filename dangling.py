@@ -1,0 +1,2 @@
+class DanglingRecord(Exception):
+    pass
