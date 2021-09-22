@@ -1,4 +1,4 @@
-from domain_monitor import DomainMonitor
+from monitor import DomainMonitor
 
 
 class Domain:

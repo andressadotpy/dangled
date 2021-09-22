@@ -1,21 +1,28 @@
-from dangling import DanglingRecord
+from abc import ABCMeta, abstractmethod
+
 import dns.resolver
+from exceptions import DanglingRecord
 
-
-class DomainMonitor:
-
-    def __init__(self, domain_name: str) -> None:
+class Record:
+    def __init__(self, domain_name) -> None:
         self.domain_name = domain_name
-        self.records_to_be_monitor = [
-            self.monitorA,
-            self.monitorAAAA,
-            self.monitorCNAME,
-            self.monitorMX,
-            self.monitorNS,
-            self.monitorTXT,
-        ]
     
-    def monitorA(self) -> list:
+    @abstractmethod
+    def monitor(self) -> list:
+        return []
+
+    def _handle_errors(self, error):
+        if error == dns.resolver.NoAnswer:
+            return []
+        elif error == dns.resolver.Timeout:
+            raise dns.resolver.Timeout
+        elif error == dns.resolver.NXDOMAIN:
+            raise DanglingRecord('This record must be dangling and is a risky dangling record.')     
+
+
+class A(Record):
+    def monitor(self) -> list:
+        print('Monitor A record:')
         try:
             data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'A'):
@@ -24,7 +31,10 @@ class DomainMonitor:
         except Exception as e:
             self._handle_errors(e)
 
-    def monitorAAAA(self) -> list:
+
+class AAAA(Record):
+    def monitor(self) -> list:
+        print('Monitor AAAA record:')
         try:
             data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'AAAA'):
@@ -33,7 +43,10 @@ class DomainMonitor:
         except Exception as e:
             self._handle_errors(e)    
 
-    def monitorCNAME(self) -> list:
+
+class CNAME(Record):
+    def monitor(self) -> list:
+        print('Monitor CNAME record:')
         try:
             data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'CNAME'):
@@ -42,7 +55,10 @@ class DomainMonitor:
         except Exception as e:
             self._handle_errors(e)
 
-    def monitorMX(self) -> list:
+
+class MX(Record):
+    def monitor(self) -> list:
+        print('Monitor MX record:')
         try:
             data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'MX'):
@@ -51,7 +67,10 @@ class DomainMonitor:
         except Exception as e:
             self._handle_errors(e)
 
-    def monitorNS(self) -> list:
+
+class NS(Record):
+    def NS(self) -> list:
+        print('Monitor NS record:')
         try:
             data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'NS'):
@@ -60,7 +79,10 @@ class DomainMonitor:
         except Exception as e:
             self._handle_errors(e)
 
-    def monitorTXT(self):
+
+class TXT(Record):
+    def TXT(self):
+        print('Monitor TXT record:')
         try:
             data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'TXT'):
@@ -69,17 +91,5 @@ class DomainMonitor:
         except Exception as e:
             self._handle_errors(e)
 
-    def monitor_all(self) -> None:
-        for monitor_function in self.records_to_be_monitor:
-            print(f'{monitor_function}: ', monitor_function())
-
     def _decoded_rdata(self, rdata: str):
         return rdata.strings[0].decode('UTF-8')
-
-    def _handle_errors(self, error):
-        if error == dns.resolver.NoAnswer:
-            return []
-        elif error == dns.resolver.Timeout:
-            raise dns.resolver.Timeout
-        elif error == dns.resolver.NXDOMAIN:
-            raise DanglingRecord('This record must be dangling and is a risky dangling record.')        
