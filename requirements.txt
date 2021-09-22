@@ -1,17 +1,2 @@
-attrs==21.2.0
-click==8.0.1
 dnspython==2.1.0
-Flask==2.0.1
-future==0.18.2
-iniconfig==1.1.1
-itsdangerous==2.0.1
-Jinja2==3.0.1
-MarkupSafe==2.0.1
-packaging==21.0
-pluggy==1.0.0
-py==1.10.0
-pyparsing==2.4.7
 pytest==6.2.5
-python-whois==0.7.3
-toml==0.10.2
-Werkzeug==2.0.1
