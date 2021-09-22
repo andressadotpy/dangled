@@ -1,4 +1,3 @@
-from records import AAAA
 from records import A, AAAA, CNAME, MX, NS, TXT
 
 
