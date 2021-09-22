@@ -20,4 +20,5 @@ class DomainMonitor:
         for record in self.records_to_monitor:
             result = record(self.domain_name).monitor()
             monitor.update(record = result)
+            print(result)
         return monitor
