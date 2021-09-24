@@ -14,13 +14,19 @@ class Record(metaclass=ABCMeta):
     def monitor(self) -> list:
         return []
 
-    def _handle_errors(self, error):
-        if error == dns.resolver.NoAnswer:
-            return []
-        elif error == dns.resolver.Timeout:
-            raise dns.resolver.Timeout
-        elif error == dns.resolver.NXDOMAIN:
-            raise DanglingRecord('This record must be dangling and is a risky dangling record.')     
+    def _handle_errors(self):
+        if dns.resolver.NoAnswer:
+            print("There's no data for this record type.")
+        if dns.resolver.Timeout:
+            print("Your domain is timing out, needs to be checked.")
+        if dns.resolver.NXDOMAIN:
+            print(Back.RED +
+                """
+                VULNERABILITY ISSUE:
+                This domain doesn't exist anymore.
+                Please delete all records pointing for this domain.
+                """ + 
+                Style.RESET_ALL)    
 
 
 class A(Record):
@@ -32,7 +38,8 @@ class A(Record):
             print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors(e)
+            print(e)
+            self._handle_errors()
 
 
 class AAAA(Record):
@@ -44,7 +51,7 @@ class AAAA(Record):
             print(Back.CYAN      + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors(e)  
+            self._handle_errors()  
 
 
 class CNAME(Record):
@@ -56,7 +63,7 @@ class CNAME(Record):
             print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors(e)
+            self._handle_errors()
 
 
 class MX(Record):
@@ -68,7 +75,7 @@ class MX(Record):
             print(Back.CYAN + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors(e)
+            self._handle_errors()
 
 
 class NS(Record):
@@ -79,8 +86,8 @@ class NS(Record):
                 self.data.append(rdata.target)
             print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
             return self.data
-        except Exception as e:
-            self._handle_errors(e)
+        except Exception:
+            self._handle_errors()
 
 
 class TXT(Record):
@@ -92,7 +99,7 @@ class TXT(Record):
             print(Back.CYAN + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors(e)
+            self._handle_errors()
 
     def _decoded_rdata(self, rdata: str):
         return rdata.strings[0].decode('UTF-8')
