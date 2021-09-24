@@ -14,12 +14,12 @@ class Record(metaclass=ABCMeta):
     def monitor(self) -> list:
         return []
 
-    def _handle_errors(self):
-        if dns.resolver.NoAnswer:
+    def _handle_errors(self, error):
+        if isinstance(error, dns.resolver.NoAnswer):
             print("There's no data for this record type.")
-        if dns.resolver.Timeout:
+        if isinstance(error, dns.resolver.Timeout):
             print("Your domain is timing out, needs to be checked.")
-        if dns.resolver.NXDOMAIN:
+        if isinstance(error, dns.resolver.NXDOMAIN):
             print(Back.RED +
                 """
                 VULNERABILITY ISSUE:
@@ -38,8 +38,7 @@ class A(Record):
             print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            print(e)
-            self._handle_errors()
+            self._handle_errors(e)
 
 
 class AAAA(Record):
@@ -51,7 +50,7 @@ class AAAA(Record):
             print(Back.CYAN      + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors()  
+            self._handle_errors(e)  
 
 
 class CNAME(Record):
@@ -63,7 +62,7 @@ class CNAME(Record):
             print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors()
+            self._handle_errors(e)
 
 
 class MX(Record):
@@ -75,7 +74,7 @@ class MX(Record):
             print(Back.CYAN + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors()
+            self._handle_errors(e)
 
 
 class NS(Record):
@@ -86,8 +85,8 @@ class NS(Record):
                 self.data.append(rdata.target)
             print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
             return self.data
-        except Exception:
-            self._handle_errors()
+        except Exception as e:
+            self._handle_errors(e)
 
 
 class TXT(Record):
@@ -99,7 +98,7 @@ class TXT(Record):
             print(Back.CYAN + f"{self.data}" + Style.RESET_ALL)
             return self.data
         except Exception as e:
-            self._handle_errors()
+            self._handle_errors(e)
 
     def _decoded_rdata(self, rdata: str):
         return rdata.strings[0].decode('UTF-8')
