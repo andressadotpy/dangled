@@ -1,11 +1,14 @@
 from abc import ABCMeta, abstractmethod
 
+from colorama import Back, Style
+
 import dns.resolver
 from exceptions import DanglingRecord
 
 class Record(metaclass=ABCMeta):
     def __init__(self, domain_name: str) -> None:
         self.domain_name = domain_name
+        self.data = []
     
     @abstractmethod
     def monitor(self) -> list:
@@ -22,72 +25,72 @@ class Record(metaclass=ABCMeta):
 
 class A(Record):
     def monitor(self) -> list:
-        print('Monitor A record:')
+        print(Back.MAGENTA + "A record:" + Style.RESET_ALL)
         try:
-            data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'A'):
-                data.append(rdata.address)
-            return data
+                self.data.append(rdata.address)
+            print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
+            return self.data
         except Exception as e:
             self._handle_errors(e)
 
 
 class AAAA(Record):
     def monitor(self) -> list:
-        print('Monitor AAAA record:')
+        print(Back.CYAN + "AAAA record:" + Style.RESET_ALL)
         try:
-            data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'AAAA'):
-                data.append(rdata.address)
-            return data
+                self.data.append(rdata.address)
+            print(Back.CYAN      + f"{self.data}" + Style.RESET_ALL)
+            return self.data
         except Exception as e:
-            self._handle_errors(e)    
+            self._handle_errors(e)  
 
 
 class CNAME(Record):
     def monitor(self) -> list:
-        print('Monitor CNAME record:')
+        print(Back.MAGENTA + "CNAME record:" + Style.RESET_ALL)
         try:
-            data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'CNAME'):
-                data.append(rdata.target)
-            return data
+                self.data.append(rdata.target)
+            print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
+            return self.data
         except Exception as e:
             self._handle_errors(e)
 
 
 class MX(Record):
     def monitor(self) -> list:
-        print('Monitor MX record:')
+        print(Back.CYAN + "MX record:" + Style.RESET_ALL)
         try:
-            data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'MX'):
-                data.append(rdata.exchange)
-            return data
+                self.data.append(rdata.exchange)
+            print(Back.CYAN + f"{self.data}" + Style.RESET_ALL)
+            return self.data
         except Exception as e:
             self._handle_errors(e)
 
 
 class NS(Record):
     def monitor(self) -> list:
-        print('Monitor NS record:')
+        print(Back.MAGENTA + "NS record:" + Style.RESET_ALL)
         try:
-            data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'NS'):
-                data.append(rdata.target)
-            return data
+                self.data.append(rdata.target)
+            print(Back.MAGENTA + f"{self.data}" + Style.RESET_ALL)
+            return self.data
         except Exception as e:
             self._handle_errors(e)
 
 
 class TXT(Record):
     def monitor(self):
-        print('Monitor TXT record:')
+        print(Back.CYAN + "TXT record:" + Style.RESET_ALL)
         try:
-            data = []
             for rdata in dns.resolver.resolve(self.domain_name, 'TXT'):
-                data.append(self._decoded_rdata(rdata))
-            return data
+                self.data.append(self._decoded_rdata(rdata))
+            print(Back.CYAN + f"{self.data}" + Style.RESET_ALL)
+            return self.data
         except Exception as e:
             self._handle_errors(e)
 
