@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ## How to use it
 
-```python3
+```shell
 In [1]: from domain import Domain
 
 In [2]: domain = Domain("andressa.dev")
@@ -33,7 +33,7 @@ There's no data for this record type.
 
 **A dangling record is a vulnerability issue.** So for your domains that are in your DNS service and are expired/not being used anymore, the monitoring system will print out this message for each record:
 
-```python3
+```shell
 A record:
 
                 VULNERABILITY ISSUE:
