@@ -3,8 +3,8 @@ from abc import ABCMeta, abstractmethod
 import dns.resolver
 from exceptions import DanglingRecord
 
-class Record:
-    def __init__(self, domain_name) -> None:
+class Record(metaclass=ABCMeta):
+    def __init__(self, domain_name: str) -> None:
         self.domain_name = domain_name
     
     @abstractmethod
@@ -69,7 +69,7 @@ class MX(Record):
 
 
 class NS(Record):
-    def NS(self) -> list:
+    def monitor(self) -> list:
         print('Monitor NS record:')
         try:
             data = []
@@ -81,7 +81,7 @@ class NS(Record):
 
 
 class TXT(Record):
-    def TXT(self):
+    def monitor(self):
         print('Monitor TXT record:')
         try:
             data = []
